@@ -81,6 +81,7 @@ input {}
 <h1>Delta kite calculator</h1>
 <p style="text-align:center">Calculates a <a href="http://www.deltas.freeserve.co.uk/plan.html">Dan Leigh standard delta</a>. Nose angles range from 86 to 120 degrees, typical is 96.</p>
 
+<p style="text-align:center">How to use this form: Enter a nose angle and a center line length, then click 'calculate'.</p>
 
 <div style="padding:5px;text-align:center;background:#ffc">
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -141,10 +142,11 @@ input {}
 <h3>Resources</h3><a href="http://www.deltas.freeserve.co.uk/plan.html">Plan and assembly instructions</a><br/>
 <a href="http://www.jesseo.com/kites/">Other kites calculators</a>
 <br/>
-	<a href="delta-calculator.txt">Source code</a>
+	<a href="https://github.com/jessegersensonchess/delta-kite-calculator">Source code</a>
 </div>
 
 <div style="float:left;width:400px">	
 
 	<img src="dplan86.gif">
 </div></div>
+</body></html>
