@@ -34,11 +34,13 @@ func process(w http.ResponseWriter, r *http.Request) {
 	NoseAngleInRadians := degreeToRadian(NoseAngle)
 	LengthAtCenterline, _ := strconv.ParseFloat(r.FormValue("LengthAtCenterline"), 64)
 	TowingPoint := LengthAtCenterline / 2
-	//ToDo == get units from the form
-	// Units := r.FormValue("Units")
 	Units := "cm"
 	if r.FormValue("Units") == "in" {
 		Units = "in"
+		SquareFeetConstant := 12.0
+	} else {
+		Units = "cm"
+		SquareFeetConstant := 30.48
 	}
 	NominalSpan := math.Tan(NoseAngleInRadians/2) * (LengthAtCenterline * 2)
 	HalfSpan := NominalSpan / 2
@@ -50,11 +52,7 @@ func process(w http.ResponseWriter, r *http.Request) {
 	SpreaderStructAttachmentPoint := ((7.0 / 9.0) * NominalLengthOfWingSpars)
 	NoseToSpreader := math.Cos(NoseAngleInRadians/2) * (LengthOfLeadingEdge - SpreaderStructAttachmentPoint)
 	Area := 1.0
-	if Units == "in" {
-		Area = (HalfSpan / 12) * (LengthAtCenterline / 12)
-	} else {
-		Area = (HalfSpan / 30.48) * (LengthAtCenterline / 30.48)
-	}
+	Area = (HalfSpan / SquareFeetConstant) * (LengthAtCenterline / SquareFeetConstant)
 	LineStrengthLightWind := Area * 1
 	LineStrengthModerateWind := Area * 2.2
 	LineStrengthStrongWind := Area * 4
