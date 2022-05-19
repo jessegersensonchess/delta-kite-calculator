@@ -37,6 +37,9 @@ func process(w http.ResponseWriter, r *http.Request) {
 	//ToDo == get units from the form
 	// Units := r.FormValue("Units")
 	Units := "cm"
+	if r.FormValue("Units") == "in" {
+		Units = "in"
+	}
 	NominalSpan := math.Tan(NoseAngleInRadians/2) * (LengthAtCenterline * 2)
 	HalfSpan := NominalSpan / 2
 	LengthOfFin := 0.75 * LengthAtCenterline
