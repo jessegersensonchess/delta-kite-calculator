@@ -1,3 +1,4 @@
+// A utility for kite builders this package calculates dimensions of a delta kite
 package main
 
 import (
