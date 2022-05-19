@@ -5,8 +5,9 @@ Calculates a "Dan Leigh standard delta kite" from provided nose angle and center
 
 Run in docker: 
 -------------------
-```docker build -t delta-kite-calculator:latest .
-docker run -it -p8000:8000 --rm delta-kite-calculator:latest```
+``` docker build -t delta-kite-calculator:latest .```
+
+``` docker run -it -p8000:8000 --rm delta-kite-calculator:latest```
 
 To Do: 
 -------------------
