@@ -70,7 +70,7 @@ else
 </style>
 <body>
 <h1>Delta kite calculator</h1>
-<p>Calculates a <a href="http://www.deltas.freeserve.co.uk/plan.html">Dan Leigh standard delta</a>. Nose angles range from 86 to 120 degrees, typical is 96.</p>
+<p>Calculates a <a href="http://www.deltakites.com/plan.html">Dan Leigh standard delta</a>. Nose angles range from 86 to 120 degrees, typical is 96.</p>
 <p>How to use this form: Enter a nose angle and a center line length, then click 'calculate'.</p>
 <div id="form">
 	<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -131,7 +131,7 @@ else
 			echo "strong winds = " . $line_strength_strong_winds . " lb. line<br/>";
 		?>
 		<h3>Resources</h3>
-		<a href="http://www.deltas.freeserve.co.uk/plan.html">Plan and assembly instructions</a>
+		<a href="http://www.deltakites.com/plan.html">Plan and assembly instructions</a>
 		<br/>
 		<a href="http://www.jesseo.com/kites/">Other kites calculators</a>
 		<br/>
