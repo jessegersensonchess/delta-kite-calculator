@@ -35,12 +35,13 @@ func process(w http.ResponseWriter, r *http.Request) {
 	LengthAtCenterline, _ := strconv.ParseFloat(r.FormValue("LengthAtCenterline"), 64)
 	TowingPoint := LengthAtCenterline / 2
 	Units := "cm"
+	SquareFeetConstant := 12.0
 	if r.FormValue("Units") == "in" {
 		Units = "in"
-		SquareFeetConstant := 12.0
+		SquareFeetConstant = 12.0
 	} else {
 		Units = "cm"
-		SquareFeetConstant := 30.48
+		SquareFeetConstant = 30.48
 	}
 	NominalSpan := math.Tan(NoseAngleInRadians/2) * (LengthAtCenterline * 2)
 	HalfSpan := NominalSpan / 2
