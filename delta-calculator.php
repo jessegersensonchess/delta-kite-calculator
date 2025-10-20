@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 // Show all errors during development
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 
 // Default values
 $noseangle = 96.0;
@@ -58,7 +58,7 @@ if ($lengthatcenterline == 0) {
 }
 
 // Area (sq ft or m^2)
-$area = calculateArea($halfspan, $lengthatcenterline, $units);
+$area = calculateArea($nominalspan, $lengthatcenterline, $units);
 
 // Line strengths (lbs)
 $line_strength_light_winds = number_format($area * 1, 0, '.', '');
@@ -76,17 +76,24 @@ $sewing = calculateSewing($lengthatcenterline, $nominalspan, $lengthofleadingedg
 $keelfrontleg = number_format($keelfrontleg, 1, '.', '');
 $keelrearleg = number_format($keelrearleg, 1, '.', '');
 
+$weight_unit = ($units === 'in') ? 'lb.' : 'kg';
+
 // --- FUNCTIONS ---
 function calculateHalfSpan(float $noseangle, float $lengthatcenterline): float {
     // half-span = tan(θ/2) × length at centerline
     return tan(deg2rad($noseangle / 2)) * $lengthatcenterline;
 }
 
-function calculateArea(float $halfspan, float $lengthatcenterline, string $units): float {
-    return match ($units) {
-        'in' => round(($halfspan / 12) * ($lengthatcenterline / 12), 1),
-        default => round(($halfspan / 30.48) * ($lengthatcenterline / 30.48), 1),
-    };
+function calculateArea(float $span, float $lengthatcenterline, string $units): float {
+    // Triangle approximation: A = 0.5 * base * height
+    $area_m2 = 0.5 * $span * $lengthatcenterline / 10000; // convert cm² to m²
+
+    if ($units === 'in') {
+        // Convert m² to ft²
+        return round($area_m2 * 10.7639, 1); // 1 m² = 10.7639 ft²
+    }
+
+    return round($area_m2, 2);
 }
 
 function calculateKeelLeg(float $depthoffin, float $lengthoffin, float $lengthatcenterline, bool $isRear = false): float {
@@ -196,9 +203,9 @@ function calculateSewing(float $lengthatcenterline, float $nominalspan, float $l
         </p>
 
         <h3>Recommended line strength</h3>
-        <p>Light winds = <?= $line_strength_light_winds ?> lb. line</p>
-        <p>Moderate winds = <?= $line_strength_moderate_winds ?> lb. line</p>
-        <p>Strong winds = <?= $line_strength_strong_winds ?> lb. line</p>
+	<p>Light winds = <?= $line_strength_light_winds ?> <?= $weight_unit ?> line</p>
+        <p>Moderate winds = <?= $line_strength_moderate_winds ?> <?= $weight_unit ?> line</p>
+        <p>Strong winds = <?= $line_strength_strong_winds ?> <?= $weight_unit ?> line</p>
     </div>
 </div>
 
