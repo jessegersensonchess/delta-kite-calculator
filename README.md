@@ -1,6 +1,6 @@
 Delta kite calculator
 ====================
-Calculates a "Dan Leigh standard delta kite" from provided nose angle and center line length. PHP version is online: https://www.jesseo.com/kites/delta-calculator.php and golang version is a work in progress. 
+Calculates a "Dan Leigh standard delta kite" from provided nose angle and center line length. PHP version is online: https://www.jesseo.com/kites/delta-calculator.php and golang version is a work in progress. Also calculates a Dunton Taylor delta (see src/)
 
 
 Run in docker: 
@@ -9,10 +9,12 @@ Run in docker:
 
 ``` docker run -it -p8000:8000 --rm delta-kite-calculator:latest```
 
+# Tests
+```docker compose up --build```
+
 To Do: 
 -------------------
  - add github action CI/CD pipeline
- - add unit tests
  - add metrics and logging
  - add a RESTful API
  - modernize html: convert tables to divs, etc

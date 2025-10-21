@@ -1,0 +1,16 @@
+# Use a lightweight PHP base image
+FROM php:8.2-alpine
+
+# Install necessary dependencies: curl for downloading, and git if needed for some fixers
+RUN apk add --no-cache curl git
+
+# Download PHP-CS-Fixer binary and make it executable
+RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o /usr/local/bin/php-cs-fixer \
+    && chmod +x /usr/local/bin/php-cs-fixer
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Set default command to php-cs-fixer
+ENTRYPOINT ["php-cs-fixer"]
+

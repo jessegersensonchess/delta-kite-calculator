@@ -1,0 +1,24 @@
+# Use official lightweight PHP Alpine image
+FROM php:8.2-alpine
+
+# Install dependencies and PHP extensions needed for testing
+RUN apk add --no-cache \
+        bash \
+        git \
+        unzip \
+        curl \
+        && docker-php-ext-install -j$(nproc) bcmath
+
+# Install PHPUnit via PHAR
+RUN curl -L -o /usr/local/bin/phpunit https://phar.phpunit.de/phpunit-10.phar \
+    && chmod +x /usr/local/bin/phpunit
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy your application code and tests into the container
+COPY . /app
+
+# Run PHPUnit by default when container starts
+CMD ["phpunit", "--colors=always", "--verbose"]
+

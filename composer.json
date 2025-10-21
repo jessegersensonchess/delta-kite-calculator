@@ -1,0 +1,16 @@
+{
+  "require-dev": {
+    "phpunit/phpunit": "^10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kite\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Kite\\Tests\\": "tests/"
+    }
+  }
+}
+
