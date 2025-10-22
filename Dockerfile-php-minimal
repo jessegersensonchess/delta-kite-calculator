@@ -1,0 +1,12 @@
+# Use official lightweight PHP Alpine image
+FROM php:8.2-alpine
+
+RUN apk add vim
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy your application code and tests into the container
+COPY . /app
+
+# Run PHPUnit by default when container starts
+#CMD ["sh"]
