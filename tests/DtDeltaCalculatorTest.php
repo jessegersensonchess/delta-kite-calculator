@@ -1,4 +1,5 @@
 <?php
+
 namespace Kite\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -167,5 +168,3 @@ class DtDeltaCalculatorTest extends TestCase
         $this->assertEquals(33.0, $boxBackCm, "BoxBackCm calculation is incorrect.");
     }
 }
-
-

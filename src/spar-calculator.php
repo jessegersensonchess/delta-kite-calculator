@@ -1,3 +1,4 @@
+[vps49293]$ cat spar-calculator.php
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -13,132 +14,203 @@
 	table,th, td {border: 1px solid black;padding:5px;}
 	table {}
 	#comparedspars {margin-top:1em;}
+
+
+.spar-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+.spar-header, .spar-row {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.spar-header {
+    font-weight: bold;
+    background-color: #f9f9f9;
+}
+
+.spar-cell {
+    flex: 1;
+    padding: 5px 10px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spar-row:last-child {
+    border-bottom: none;
+}
+
+.spar-cell:first-child {
+    font-weight: normal;
+}
+
 	</style>
 
 <?php
-    $deflection = $_GET['wingspar'];
-if (isset($_POST['submit'])) {
-    $deflection = $_POST['deflection'];
-    $oneid = $_POST['oneid'] / 25.4;
-    $oneod = $_POST['oneod'] / 25.4;
-    $oneweight = number_format(4.5 * (pow(.5 * $_POST['oneod'], 2) - pow(.5 * $_POST['oneid'], 2)), 1, '.', '');
-    $twoweight = number_format(6.277 * (pow(.5 * $_POST['twood'], 2) - pow(.5 * $_POST['twoid'], 2)), 1, '.', '');
-    $threeweight = number_format(4.5 * (pow(.5 * $_POST['threeod'], 2) - pow(.5 * $_POST['threeid'], 2)), 1, '.', '');
-    $fourweight = number_format(6.277 * (pow(.5 * $_POST['fourod'], 2) - pow(.5 * $_POST['fourid'], 2)), 1, '.', '');
-    $twoid = $_POST['twoid'] / 25.4;
-    $twood = $_POST['twood'] / 25.4;
-    $fourid = $_POST['fourid'] / 25.4;
-    $fourod = $_POST['fourod'] / 25.4;
-    $fiveid = $_POST['fiveid'] / 25.4;
-    $fiveod = $_POST['fiveod'] / 25.4;
-    $threeid = $_POST['threeid'] / 25.4;
-    $threeod = $_POST['threeod'] / 25.4;
-    if ($oneod != null) {
-        $onedeflection = abs(
-            0.00197889 /
+// Show all errors during development
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+// Include the Spar class
+require_once __DIR__ . '/src/Spar.php';
+
+use Kite\Spar;
+
+// Function to calculate relative stiffness
+function calculateRelativeStiffness($sparDeflection, $passedInDeflection)
+{
+    if ($passedInDeflection == 0) {
+        return 0; // Avoid division by zero
+    }
+
+    // Relative stiffness formula
+    return $sparDeflection / $passedInDeflection;
+}
+
+// Function to calculate scale factor from relative stiffness
+function calculateScaleFactor($relativeStiffness)
+{
+    if ($relativeStiffness == 0) {
+        return 0; // If relative stiffness is zero, scale factor is zero
+    }
+
+    // Scale factor formula (0.25th power of relative stiffness)
+    return number_format(pow($relativeStiffness, 0.25), 2, '.', '');
+}
+
+function calculateDeflection($material_elasticity, $outside_diameter, $inside_diameter)
+{
+    // Perform the calculation based on the provided formula
+    $deflection = abs(
+        $material_elasticity /
             (
                 (
                     0.049087385 *
-                    (
-                        (pow($oneod, 4)) -
-                        (pow($oneid, 4))
-                    )
+                            (
+                                (pow($outside_diameter, 4)) -
+                                    (pow($inside_diameter, 4))
+                            )
                 )
             ) / 48
-        );
-        $relstiffnessone = $deflection / $onedeflection;
-    }
+    );
 
-    if ($threeod != null) {
-        $threedeflection = abs(
-            0.00197889 /
-                    (
-                        (
-                            0.049087385 *
-                            (
-                                (pow($threeod, 4)) -
-                                (pow($threeid, 4))
-                            )
-                        )
-                    ) / 48
-        );
-        $relstiffnessthree = $deflection / $threedeflection;
-    }
-
-    if ($fourod != null) {
-        $fourdeflection = abs(
-            0.004836093 /
-                    (
-                        (
-                            0.049087385 *
-                            (
-                                (pow($fourod, 4)) -
-                                (pow($fourid, 4))
-                            )
-                        )
-                    ) / 48
-        );
-        $relstiffnessfour = $deflection / $fourdeflection;
-    }
-
-    if ($fiveod != null) {
-        $fivedeflection = abs(
-            0.016199078 /
-                    (
-                        (
-                            0.049087385 *
-                            (
-                                (pow($fiveod, 4)) -
-                                (pow($fiveid, 4))
-                            )
-                        )
-                    ) / 48
-        );
-        $relstiffnessfive = $deflection / $fivedeflection;
-    }
-    if ($twood != null) {
-        $twodeflection = abs(
-            0.004836093 /
-                    (
-                        (
-                            0.049087385 *
-                            (
-                                (pow($twood, 4)) -
-                                (pow($twoid, 4))
-                            )
-                        )
-                    ) / 48
-        );
-        $relstiffnesstwo = $deflection / $twodeflection;
-    }
+    // Return the calculated deflection
+    return $deflection;
 }
 
-if ($deflection != null) {
-    $scalefactorone = number_format(pow($relstiffnessone, 0.25), 2, '.', '');
-    $scalefactortwo = number_format(pow($relstiffnesstwo, 0.25), 2, '.', '');
-    $scalefactorthree = number_format(pow($relstiffnessthree, 0.25), 2, '.', '');
-    $scalefactorfour = number_format(pow($relstiffnessfour, 0.25), 2, '.', '');
-    $scalefactorfive = number_format(pow($relstiffnessfive, 0.25), 2, '.', '');
+// Default passed-in deflection from URL or form
+$deflection = isset($_POST['deflection']) && is_numeric($_POST['deflection'])
+    ? (float) $_POST['deflection']
+    : 1.0; // or whatever default makes sense
+
+
+
+
+$deflection = $_GET['wingspar'];
+if (isset($_POST['submit'])) {
+    $deflection = $_POST['deflection'];
+    // todo: refactor
+    $carbonOneWeight = number_format(4.5 * (pow(.5 * $_POST['carbonOneOD'], 2) - pow(.5 * $_POST['carbonOneID'], 2)), 1, '.', '');
+    $carbonTwoWeight = number_format(4.5 * (pow(.5 * $_POST['carbonTwoOD'], 2) - pow(.5 * $_POST['carbonTwoID'], 2)), 1, '.', '');
+
+    $fiberglassOneWeight = number_format(6.277 * (pow(.5 * $_POST['fiberglassOneOD'], 2) - pow(.5 * $_POST['fiberglassOneID'], 2)), 1, '.', '');
+    $fiberglassTwoWeight = number_format(6.277 * (pow(.5 * $_POST['fiberglassTwoOD'], 2) - pow(.5 * $_POST['fiberglassTwoID'], 2)), 1, '.', '');
+
+    $carbonOneID = $_POST['carbonOneID'] / 25.4;
+    $carbonOneOD = $_POST['carbonOneOD'] / 25.4;
+    $carbonTwoID = $_POST['carbonTwoID'] / 25.4;
+    $carbonTwoOD = $_POST['carbonTwoOD'] / 25.4;
+
+    $fiberglassOneID = $_POST['fiberglassOneID'] / 25.4;
+    $fiberglassOneOD = $_POST['fiberglassOneOD'] / 25.4;
+    $fiberglassTwoID = $_POST['fiberglassTwoID'] / 25.4;
+    $fiberglassTwoOD = $_POST['fiberglassTwoOD'] / 25.4;
+    $fiveid = $_POST['fiveid'] / 25.4;
+    $fiveod = $_POST['fiveod'] / 25.4;
+
+    // Create an instance of the Spar class
+    if ($deflection != null) {
+        $spars = [
+            new Spar('2mm carbon rod', 21.85, $deflection, 1, 1, 5, 1.6),
+            new Spar('2.5mm carbon rod', 9.1, $deflection, 1, 1, 5, 1.6),
+            new Spar('3mm carbon rod', 4.316, $deflection, 1, 1, 5, 1.6),
+            new Spar('4mm carbon rod', 1.366, $deflection, 1, 1, 5, 1.6),
+            new Spar('4/2.5mm carbon', 1.711, $deflection, 1, 1, 5, 1.6),
+            new Spar('5/3mm carbon tube', 0.64, $deflection, 1, 1, 5, 1.6),
+            new Spar('6/4mm carbon tube', 0.34, $deflection, 1, 1, 5, 1.6),
+            new Spar('Skyshark P 90', 0.565, $deflection, 1, 1, 5, 1.6),
+            new Spar('Skyshark P 100', 0.413, $deflection, 1, 1, 5, 1.6),
+            new Spar('Skyshark P 400', 0.302, $deflection, 1, 1, 5, 1.6),
+            new Spar('Excel 6 fg tube blue', 1.079, $deflection, 1, 1, 5, 1.6),
+            new Spar('Excel 8 fg tube grey', 0.272, $deflection, 1, 1, 5, 1.6),
+            new Spar('Excel 9 fg tube red', 0.118, $deflection, 1, 1, 5, 1.6),
+            new Spar('Excel 10 fg tube white', 0.047, $deflection, 1, 1, 5, 1.6),
+            new Spar('3mm Wood', 35.3288, $deflection, 1, 1, 5, 1.6),
+            new Spar('5mm Wood', 4.5786, $deflection, 1, 1, 5, 1.6),
+            new Spar('6mm Wood', 2.2081, $deflection, 1, 1, 5, 1.6),
+            new Spar('8mm Wood', 0.6986, $deflection, 1, 1, 5, 1.6),
+            new Spar('1/8" Wood', 28.1604, $deflection, 1, 1, 5, 1.6),
+            new Spar('3/16" Wood', 5.5626, $deflection, 1, 1, 5, 1.6),
+            new Spar('1/4" wood', 1.7600, $deflection, 1, 1, 5, 1.6),
+            new Spar('5/16" wood', 0.7209, $deflection, 1, 1, 5, 1.6),
+        ];
+
+
+        $carbon_elasticity = 0.00197889;
+        $fiberglass_elasticity = 0.004836093;
+        $wood_elasticity = 0.016199078;
+
+        // carbon, first row of input in html form
+        if ($carbonOneOD != null) {
+            $carbonOneDeflection = calculateDeflection($carbon_elasticity, $carbonOneOD, $carbonOneID);
+            $carbonOneRelativeStiffness = $deflection / $carbonOneDeflection;
+        }
+
+        // carbon, second row of input in html form
+        if ($carbonTwoOD != null) {
+            $carbonTwoDeflection = calculateDeflection($carbon_elasticity, $carbonTwoOD, $carbonTwoID);
+            $carbonTwoRelativeStiffness = $deflection / $carbonTwoDeflection;
+        }
+
+        // fiberglass, third row of input in html form
+        if ($fiberglassOneOD != null) {
+            $fiberglassOneDeflection = calculateDeflection($fiberglass_elasticity, $fiberglassOneOD, $fiberglassOneID);
+            $fiberglassOneRelativeStiffness = $deflection / $fiberglassOneDeflection;
+        }
+
+        // fiberglass, fourth row of input in html form
+        if ($fiberglassTwoOD != null) {
+            $fiberglassTwoDeflection = calculateDeflection($fiberglass_elasticity, $fiberglassTwoOD, $fiberglassTwoID);
+            $fiberglassTwoRelativeStiffness = $deflection / $fiberglassTwoDeflection;
+        }
+        // ramen wood, fifth row of input in html form
+        if ($fiveod != null) {
+            $fivedeflection = calculateDeflection($wood_elasticity, $fiveod, $fiveid);
+            $relstiffnessfive = $deflection / $fivedeflection;
+        }
+
+
+    }
+
+
+    if ($deflection != null) {
+        $carbonOneScaleFactor = calculateScaleFactor($carbonOneRelativeStiffness);
+        $carbonTwoScaleFactor = calculateScaleFactor($carbonTwoRelativeStiffness);
+        $fiberglassOneScaleFactor = calculateScaleFactor($fiberglassOneRelativeStiffness);
+        $fiberglassTwoScaleFactor = calculateScaleFactor($fiberglassTwoRelativeStiffness);
+        $scalefactorfive = calculateScaleFactor($relstiffnessfive);
+
+    }
 }
-if ($deflection != null) {
-}
-
-$scalefactorP90 = (number_format(pow(($deflection / 0.565), 0.25), 2, '.', '') - 1) * 100;
-
-$scalefactor53carbon = (number_format(pow(($deflection / 0.64), 0.25), 2, '.', '') - 1) * 100;
-$scalefactor40carbon = (number_format(pow(($deflection / 1.37), 0.25), 2, '.', '') - 1) * 100;
-$scalefactor425carbon = (number_format(pow(($deflection / 1.61), 0.25), 2, '.', '') - 1) * 100;
-$scalefactor20carbon = (number_format(pow(($deflection / 21.85), 0.25), 2, '.', '') - 1) * 100;
-$scalefactor64carbon = (number_format(pow(($deflection / 0.34), 0.25), 2, '.', '') - 1) * 100;
-$scalefactorP100 = (number_format(pow(($deflection / 0.413), 0.25), 2, '.', '') - 1) * 100;
-$scalefactorP400 = (number_format(pow(($deflection / 0.302), 0.25), 2, '.', '') - 1) * 100;
-$scalefactor30carbon = (number_format(pow(($deflection / 4.316), 0.25), 2, '.', '') - 1) * 100;
-$scalefactor25carbon = (number_format(pow(($deflection / 9.106), 0.25), 2, '.', '') - 1) * 100;
-
-$scalefactorexcel10 = (number_format(pow(($deflection / 0.047), 0.25), 2, '.', '') - 1) * 100;
-$scalefactorexcel6 = (number_format(pow(($deflection / 1.079), 0.25), 2, '.', '') - 1) * 100;
-$scalefactorexcel8 = (number_format(pow(($deflection / 0.272), 0.25), 2, '.', '') - 1) * 100;
-$scalefactorexcel9 = (number_format(pow(($deflection / 0.118), 0.25), 2, '.', '') - 1) * 100;
 
 ?>
 	</head><body>
@@ -157,63 +229,50 @@ $scalefactorexcel9 = (number_format(pow(($deflection / 0.118), 0.25), 2, '.', ''
 	Enter deflection <input type="text" value="<?php echo $deflection;?>" name="deflection" />
 	
 <table id="comparedspars" align="center"><tr><td>Comparison spar</td><td>O.D mm</td><td>I.D mm</td></tr>
-<tr><td>Carbon spar</td><td><input type="text" value="<?php echo $oneod * 25.4;?>" name="oneod" /></td><td><input value="<?php echo $oneid * 25.4;?>" type="text" name="oneid" /></td></tr>
-<tr><td>Carbon spar</td><td><input type="text" value="<?php echo $threeod * 25.4;?>" name="threeod" /></td><td><input value="<?php echo $threeid * 25.4;?>" type="text" name="threeid" /></td></tr>
-<tr><td>Fiberglass spar</td><td><input type="text" value="<?php echo $twood * 25.4;?>" name="twood" /></td><td><input value="<?php echo $twoid * 25.4;?>" type="text" name="twoid" /></td></tr>
-<tr><td>Fiberglass spar</td><td><input type="text" value="<?php echo $fourod * 25.4;?>" name="fourod" /></td><td><input value="<?php echo $fourid * 25.4;?>" type="text" name="fourid" /></td></tr>
+<tr><td>Carbon spar</td><td><input type="text" value="<?php echo $carbonOneOD * 25.4;?>" name="carbonOneOD" /></td><td><input value="<?php echo $carbonOneID * 25.4;?>" type="text" name="carbonOneID" /></td></tr>
+<tr><td>Carbon spar</td><td><input type="text" value="<?php echo $carbonTwoOD * 25.4;?>" name="carbonTwoOD" /></td><td><input value="<?php echo $carbonTwoID * 25.4;?>" type="text" name="carbonTwoID" /></td></tr>
+<tr><td>Fiberglass spar</td><td><input type="text" value="<?php echo $fiberglassOneOD * 25.4;?>" name="fiberglassOneOD" /></td><td><input value="<?php echo $fiberglassOneID * 25.4;?>" type="text" name="fiberglassOneID" /></td></tr>
+<tr><td>Fiberglass spar</td><td><input type="text" value="<?php echo $fiberglassTwoOD * 25.4;?>" name="fiberglassTwoOD" /></td><td><input value="<?php echo $fiberglassTwoID * 25.4;?>" type="text" name="fiberglassTwoID" /></td></tr>
 <tr><td>Ramen wood spar (experimental)</td><td><input type="text" value="<?php echo $fiveod * 25.4;?>" name="fiveod" /></td><td><input value="<?php echo $fiveid * 25.4;?>" type="text" name="fiveid" /></td></tr>
-
-
 </table>
+
 <input type="submit" name="submit" style="width:auto;font-size:1em;margin:1em;" value="calculate" />
 	</form>
 	</div>	</div>
 
 <div style="float:left;width:60%;">
-<h3>Scaling factors of comparision spars</h3><table>
-			<tr><td>Calculated spar (O.D/I.D)</td><td>weight (g/m)</td><td>deflection (in.)</td><td><b>scale factor</b></td></tr>
-			<tr><td nowrap><?php echo  $_POST['oneod'] . " mm / " . $_POST['oneid'] . " mm"; ?> carbon</td><td><?php echo $oneweight . "";?></td><td><?php echo number_format($onedeflection, 2, '.', '') . "";?></td><td><b><?php echo $scalefactorone;?></b></td></tr>
-			<tr><td><?php echo  $_POST['threeod'] . " mm / " . $_POST['threeid'] . " mm"; ?> carbon</td><td><?php echo $threeweight . "";?></td><td><?php echo number_format($threedeflection, 2, '.', '') . "";?></td><td><b><?php echo $scalefactorthree;?></b></td></tr>
-			<tr><td><?php echo  $_POST['twood'] . " mm / " . $_POST['twoid'] . " mm"; ?> fiberglass</td><td><?php echo $twoweight . "";?></td><td><?php echo number_format($twodeflection, 2, '.', '') . "";?></td><td><b><?php echo $scalefactortwo;?></b></td></tr>
-			<tr><td><?php echo  $_POST['fourod'] . " mm / " . $_POST['fourid'] . " mm"; ?> fiberglass</td><td><?php echo $fourweight . "";?></td><td><?php echo number_format($fourdeflection, 2, '.', '') . "";?></td><td><b><?php echo $scalefactorfour;?></b></td></tr>
-			<tr><td><?php echo  $_POST['fiveod'] . " mm / " . $_POST['fiveid'] . " mm"; ?> ramen</td><td><?php echo "";?></td><td><?php echo number_format($fivedeflection, 2, '.', '') . "";?></td><td><b><?php echo $scalefactorfive;?></b></td></tr>
-		</table>
-
-	
-<pre>
-2mm carbon rod	 	21.85 <?php echo $scalefactor20carbon ."%"; ?>
-
-2.5mm carbon rod 	(9.1) <?php echo $scalefactor25carbon ."%"; ?>
-
-3mm carbon rod		4.316 <?php echo $scalefactor30carbon ."%"; ?>
-
-4mm carbon rod	 	1.366 <?php echo $scalefactor40carbon ."%"; ?>
-
-4/2.5mm carbon (jino)	1.711 <?php echo $scalefactor425carbon ."%"; ?>
-
-5/3mm carbon tube	<?php echo $scalefactor53carbon ."%"; ?>
-
-6/4mm carbon tube 	<?php echo $scalefactor64carbon ."%"; ?>
-
-Skyshark P 90 		<?php echo $scalefactorP90 ."%"; ?> (deflection: 0.565)
-Skyshark P 100		<?php echo $scalefactorP100 ."%"; ?> (deflection: 0.413)
-Skyshark P 400		<?php echo $scalefactorP400 ."%"; ?> (deflection: 0.302)
-Excel 6 fg tube blue 	<?php echo $scalefactorexcel6 ."%"; ?> 	(1.079) 24.67 g/m
-Excel 8 fg tube grey 	<?php echo $scalefactorexcel8 ."%"; ?> 	(0.272) 38.18 g/m
-Excel 9 fg tube red 	<?php echo $scalefactorexcel9 ."%"; ?> 	(0.118) 51.2 g/m
-Excel 10 fg tube white 	<?php echo $scalefactorexcel10 ."%"; ?> 	(0.047) 54 g/m
-
-3mm Wood			(35.3288)
-5mm Wood			(4.5786)
-6mm Wood			(2.2081)
-8mm Wood			(0.6986)
-1/8" Wood			(28.1604)
-3/16" Wood			(5.5626)
-1/4" wood			(1.7600)
-5/16" wood			(0.7209)
-
-
-</pre>
+<h3>Scaling factors of comparision spars</h3>
+<table>
+    <tr><td>Calculated spar (O.D/I.D)</td><td>weight (g/m)</td><td>deflection (in.)</td><td><b>scale factor</b></td></tr>
+    <tr><td nowrap><?php echo  $_POST['carbonOneOD'] . " mm / " . $_POST['carbonOneID'] . " mm"; ?> carbon</td><td><?php echo $carbonOneWeight . "";?></td><td><?php echo number_format($carbonOneDeflection, 2, '.', '') . "";?></td><td><b><?php echo $carbonOneScaleFactor;?></b></td></tr>
+    <tr><td><?php echo  $_POST['carbonTwoOD'] . " mm / " . $_POST['carbonTwoID'] . " mm"; ?> carbon</td><td><?php echo $carbonTwoWeight . "";?></td><td><?php echo number_format($carbonTwoDeflection, 2, '.', '') . "";?></td><td><b><?php echo $carbonTwoScaleFactor;?></b></td></tr>
+    <tr><td><?php echo  $_POST['fiberglassOneOD'] . " mm / " . $_POST['fiberglassOneID'] . " mm"; ?> fiberglass</td><td><?php echo $fiberglassOneWeight . "";?></td><td><?php echo number_format($fiberglassOneDeflection, 2, '.', '') . "";?></td><td><b><?php echo $fiberglassOneScaleFactor;?></b></td></tr>
+    <tr><td><?php echo  $_POST['fiberglassTwoOD'] . " mm / " . $_POST['fiberglassTwoID'] . " mm"; ?> fiberglass</td><td><?php echo $fiberglassTwoWeight . "";?></td><td><?php echo number_format($fiberglassTwoDeflection, 2, '.', '') . "";?></td><td><b><?php echo $fiberglassTwoScaleFactor;?></b></td></tr>
+    <tr><td><?php echo  $_POST['fiveod'] . " mm / " . $_POST['fiveid'] . " mm"; ?> ramen</td><td><?php echo "";?></td><td><?php echo number_format($fivedeflection, 2, '.', '') . "";?></td><td><b><?php echo $scalefactorfive;?></b></td></tr>
+</table>
 
 </div>
+
+<?php
+echo "<div class='spar-table'>";
+echo "<div class='spar-header'>";
+echo "<div class='spar-cell'>Name</div>";
+echo "<div class='spar-cell'>Scale Factor</div>";
+echo "<div class='spar-cell'>Spar Deflection</div>";
+echo "</div>";
+
+// Output each spar's details
+foreach ($spars as $spar) {
+    echo "<div class='spar-row'>";
+    echo "<div class='spar-cell'>{$spar->name}</div>";
+    echo "<div class='spar-cell'>{$spar->scalefactor}%</div>";
+    echo "<div class='spar-cell'>{$spar->sparDeflection}</div>";
+    echo "</div>";
+}
+
+echo "</div>";
+
+
+?>
+
   </body></html>

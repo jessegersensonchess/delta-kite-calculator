@@ -11,6 +11,11 @@
     "psr-4": {
       "Kite\\Tests\\": "tests/"
     }
+  },
+  "config": {
+    "platform": {
+      "php": "8.0.0"
+    }
   }
 }
 
