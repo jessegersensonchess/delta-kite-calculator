@@ -57,7 +57,7 @@ if ($lengthatcenterline == 0) {
     $spreaderlength2 = number_format(($nosetospreader / $lengthatcenterline) * $nominalspan, 1, '.', '');
 }
 
-// Area (sq ft or m^2)
+// Area (ft^2 or m^2)
 $area = calculateArea($nominalspan, $lengthatcenterline, $units);
 
 // Line strengths (lbs)
@@ -89,8 +89,10 @@ function calculateArea(float $span, float $lengthatcenterline, string $units): f
     $area_m2 = 0.5 * $span * $lengthatcenterline / 10000; // convert cm² to m²
 
     if ($units === 'in') {
-        // Convert m² to ft²
-        return round($area_m2 * 10.7639, 1); // 1 m² = 10.7639 ft²
+            $span_ft = $span / 12;
+            $lengthatcenterline_ft = $lengthatcenterline/12;
+            $area = $span_ft * $lengthatcenterline_ft * 0.5;
+        return round($area, 1); 
     }
 
     return round($area_m2, 2);
@@ -115,13 +117,6 @@ function calculateSewing(float $lengthatcenterline, float $nominalspan, float $l
     );
 }
 ?>
-
-
-
-
-
-
-
 
 <html><body><title>Delta kite calculator</title>
 <style>
@@ -209,16 +204,14 @@ function calculateSewing(float $lengthatcenterline, float $nominalspan, float $l
     </div>
 </div>
 
-
-
-		<h3>Resources</h3>
-		<a href="http://www.deltakites.com/plan.html">Plan and assembly instructions</a>
-		<br/>
-		<a href="http://www.jesseo.com/kites/">Other kites calculators</a>
-		<br/>
-		<a href="https://github.com/jessegersensonchess/delta-kite-calculator">Source code</a>
-		<br/>
-		<br/>
+	<h3>Resources</h3>
+	<a href="http://www.deltakites.com/plan.html">Plan and assembly instructions</a>
+	<br/>
+	<a href="http://www.jesseo.com/kites/">Other kites calculators</a>
+	<br/>
+	<a href="https://github.com/jessegersensonchess/delta-kite-calculator">Source code</a>
+	<br/>
+	<br/>
 	</div>
 	<div id="plan">
 		<img src="dplan86.gif">
