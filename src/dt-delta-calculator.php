@@ -117,7 +117,7 @@ foreach ($getSparDeflection as $row) {
     $precision = $row['precision'];
     $valueFmt   = number_format($value, $precision);
 
-    echo "<tr><td>" . htmlentities($label) . "</td><td><a href='/kites/spar-calculator.php?wingspar=" . urlencode($value) . "'>" . htmlentities($value) . "</a></td></tr>\n";
+    echo "<tr><td>" . htmlentities($label) . "</td><td><a href='/kites/spar-calculator.php?wingspar=" . urlencode(htmlentities($value)) . "'>" . htmlentities($value) . "</a></td></tr>\n";
 
 }
 ?>
