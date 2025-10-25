@@ -1,4 +1,4 @@
-name: PHP CS Fixer and Docker Compose
+name: PHP unit tests
 
 on:
   workflow_dispatch:
