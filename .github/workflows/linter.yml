@@ -30,12 +30,17 @@ jobs:
         docker run --rm -v $(pwd):/app php-cs-fixer:ci fix src/ --rules=@PSR12 --using-cache=no
         docker run --rm -v $(pwd):/app php-cs-fixer:ci fix tests/ --rules=@PSR12 --using-cache=no
 
-    - name: Commit and push VERSION file
-      if: ${{ steps.linter.outputs.changed == 'true' }} # Only commit if files are modified
+    - name: Commit and push
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add $(git diff --name-only --cached)
-        git commit -m "ci: linter"
-        git push
+        if [[ $(git diff --name-only) ]]; then
+          echo "Changes detected. Committing and pushing..."
+          git diff --name-only
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add $(git diff --name-only --cached)
+          git commit -m "ci: linter"
+          git push
+        else
+          echo "No changes detected. Skipping commit."
+        fi
 
