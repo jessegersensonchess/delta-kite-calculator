@@ -3,8 +3,7 @@ name: Security checks
 on: [push, pull_request]
 
 jobs:
-  lint:
-
+  detect-secrets:
     runs-on: ubuntu-latest
 
     steps:
