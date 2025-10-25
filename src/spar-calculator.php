@@ -256,10 +256,10 @@ if (isset($_POST['submit'])) {
 
 // Output each spar's details
 foreach ($spars as $spar) {
-	// Display row header only if it's the first row (i.e., when row_count == 0)
+    // Display row header only if it's the first row (i.e., when row_count == 0)
     if ($spar === reset($spars)) {
-	    echo "<div class='spar-table'>";
-	    echo "<h2>Compare deflection known reference spars</h2>";
+        echo "<div class='spar-table'>";
+        echo "<h2>Compare deflection known reference spars</h2>";
         echo "<div class='spar-header'>";
         echo "<div class='spar-cell'>name</div>";
         echo "<div class='spar-cell'>scale factor</div>";
