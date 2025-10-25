@@ -1,5 +1,6 @@
 <?php
-   namespace Kite;
+
+namespace Kite;
 
 /**
  * Class Delta

@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace Kite\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Kite\Delta;
+
 require_once __DIR__ . '/../src/Delta.php';
 
 /**
@@ -254,7 +255,7 @@ class DeltaTest extends TestCase
         $lengthOfFin = $this->delta->getLengthOfFin();
         $lengthAtCenterline = $this->delta->getLengthAtCenterline();
         $expected = sqrt(($depthOfFin ** 2) + (($lengthOfFin - (0.5 * $lengthAtCenterline) - $lengthOfFin) ** 2));
-		$expected = round($expected, 1);
+        $expected = round($expected, 1);
         $this->assertEquals($expected, $keelRearLeg, '', 0.01);
     }
 
@@ -282,4 +283,3 @@ class DeltaTest extends TestCase
         $this->assertEquals('kg', $weightUnit); // Default unit is 'cm', so should return 'kg'
     }
 }
-
