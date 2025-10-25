@@ -57,7 +57,7 @@
 <?php
 // Show all errors during development
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 
 // Include the Spar class
 require_once __DIR__ . '/src/Spar.php';
@@ -214,7 +214,7 @@ if (isset($_POST['submit'])) {
 ?>
 	</head><body>
 	<h1>Carbon and Fiberglass spar scaling calculator</h1>
-<p>This calculator helps kite builders compare spars and determine their relative scaling factors, particularly when scaling a design. To use it, measure a spar's deflection by suspending a 908-gram weight from the center of a 26-inch (66 cm) segment and recording how far it bends (deflects). For example, a 2.5 mm carbon rod deflects 9.106 inches under this setup.</p>
+<p>This calculator helps compare relative flexibility of spars. To use it, enter the distance, in inches, a 908-gram weight deflects when hung from the center of a 26-inch (66 cm) spar.</p>
 
 <p>To begin, enter a deflection value and click Calculate. You can also optionally enter the outside diameter (O.D.) and inside diameter (I.D.) of the spars being compared. For solid rods, enter 0 for the inside diameter.</p>
 
@@ -223,16 +223,16 @@ if (isset($_POST['submit'])) {
 <p>This page is written in PHP by Jesse Gersenson (see <a href="http://www.jesseo.com/kites/">kite calculators</a>) based on equations from <a href="http://www.nic.fi/~sos/spars/spars.htm">Dave Lord's Scale Factor</a> and a <a href="http://www.jesseo.com/kites/Spar-Deflection-and-Comparison-Chart-simon-p-craft%20.xls">spreadsheet by Simon Craft</a></p>
 
 	<div style="width:35%;margin-right:2em;text-align:center;float:left;">
-	<h3>Reference spar deflection</h3><div style="background:#ffc;border:1px #ddd dashed">
+	<h3>Spar deflection</h3><div style="background:#ffc;border:1px #ddd dashed">
 	<form style="margin:0;padding:1em;" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 	Enter deflection <input type="text" value="<?php echo htmlentities($deflection);?>" name="deflection" />
 	
 <table id="comparedspars" align="center"><tr><td>Comparison spar</td><td>O.D mm</td><td>I.D mm</td></tr>
-<tr><td>Carbon spar</td><td><input type="text" value="<?php echo htmlentities($carbonOneOD * 25.4);?>" name="carbonOneOD" /></td><td><input value="<?php echo htmlentities($carbonOneID * 25.4);?>" type="text" name="carbonOneID" /></td></tr>
-<tr><td>Carbon spar</td><td><input type="text" value="<?php echo htmlentities($carbonTwoOD * 25.4);?>" name="carbonTwoOD" /></td><td><input value="<?php echo htmlentities($carbonTwoID * 25.4);?>" type="text" name="carbonTwoID" /></td></tr>
-<tr><td>Fiberglass spar</td><td><input type="text" value="<?php echo htmlentities($fiberglassOneOD * 25.4);?>" name="fiberglassOneOD" /></td><td><input value="<?php echo htmlentities($fiberglassOneID * 25.4);?>" type="text" name="fiberglassOneID" /></td></tr>
-<tr><td>Fiberglass spar</td><td><input type="text" value="<?php echo htmlentities($fiberglassTwoOD * 25.4);?>" name="fiberglassTwoOD" /></td><td><input value="<?php echo htmlentities($fiberglassTwoID * 25.4);?>" type="text" name="fiberglassTwoID" /></td></tr>
-<tr><td>Ramen wood spar (experimental)</td><td><input type="text" value="<?php echo htmlentities($fiveod * 25.4);?>" name="fiveod" /></td><td><input value="<?php echo htmlentities($fiveid * 25.4);?>" type="text" name="fiveid" /></td></tr>
+<tr><td>Carbon</td><td><input type="text" value="<?php echo htmlentities($carbonOneOD * 25.4);?>" name="carbonOneOD" /></td><td><input value="<?php echo htmlentities($carbonOneID * 25.4);?>" type="text" name="carbonOneID" /></td></tr>
+<tr><td>Carbon</td><td><input type="text" value="<?php echo htmlentities($carbonTwoOD * 25.4);?>" name="carbonTwoOD" /></td><td><input value="<?php echo htmlentities($carbonTwoID * 25.4);?>" type="text" name="carbonTwoID" /></td></tr>
+<tr><td>Fiberglass</td><td><input type="text" value="<?php echo htmlentities($fiberglassOneOD * 25.4);?>" name="fiberglassOneOD" /></td><td><input value="<?php echo htmlentities($fiberglassOneID * 25.4);?>" type="text" name="fiberglassOneID" /></td></tr>
+<tr><td>Fiberglass</td><td><input type="text" value="<?php echo htmlentities($fiberglassTwoOD * 25.4);?>" name="fiberglassTwoOD" /></td><td><input value="<?php echo htmlentities($fiberglassTwoID * 25.4);?>" type="text" name="fiberglassTwoID" /></td></tr>
+<tr><td>Ramen wood</td><td><input type="text" value="<?php echo htmlentities($fiveod * 25.4);?>" name="fiveod" /></td><td><input value="<?php echo htmlentities($fiveid * 25.4);?>" type="text" name="fiveid" /></td></tr>
 </table>
 
 <input type="submit" name="submit" style="width:auto;font-size:1em;margin:1em;" value="calculate" />
@@ -240,9 +240,9 @@ if (isset($_POST['submit'])) {
 	</div>	</div>
 
 <div style="float:left;width:60%;">
-<h3>Scaling factors of comparision spars</h3>
+<h3>Calculated scaling factors of comparision spars</h3>
 <table>
-    <tr><td>Calculated spar (O.D/I.D)</td><td>weight (g/m)</td><td>deflection (in.)</td><td><b>scale factor</b></td></tr>
+    <tr><td>spar (O.D/I.D)</td><td>weight (g/m)</td><td>deflection (in.)</td><td><b>scale factor</b></td></tr>
     <tr><td nowrap><?php echo htmlentities($_POST['carbonOneOD'] . " mm / " . $_POST['carbonOneID'] . " mm"); ?> carbon</td><td><?php echo htmlentities($carbonOneWeight . "");?></td><td><?php echo htmlentities(number_format($carbonOneDeflection, 2, '.', '') . "");?></td><td><b><?php echo htmlentities($carbonOneScaleFactor);?></b></td></tr>
     <tr><td><?php echo htmlentities($_POST['carbonTwoOD'] . " mm / " . $_POST['carbonTwoID'] . " mm"); ?> carbon</td><td><?php echo htmlentities($carbonTwoWeight . "");?></td><td><?php echo htmlentities(number_format($carbonTwoDeflection, 2, '.', '') . "");?></td><td><b><?php echo htmlentities($carbonTwoScaleFactor);?></b></td></tr>
     <tr><td><?php echo htmlentities($_POST['fiberglassOneOD'] . " mm / " . $_POST['fiberglassOneID'] . " mm"); ?> fiberglass</td><td><?php echo htmlentities($fiberglassOneWeight . "");?></td><td><?php echo htmlentities(number_format($fiberglassOneDeflection, 2, '.', '') . "");?></td><td><b><?php echo htmlentities($fiberglassOneScaleFactor);?></b></td></tr>
@@ -253,18 +253,22 @@ if (isset($_POST['submit'])) {
 </div>
 
 <?php
-echo "<div class='spar-table'>";
-echo "<div class='spar-header'>";
-echo "<div class='spar-cell'>Name</div>";
-echo "<div class='spar-cell'>Scale Factor</div>";
-echo "<div class='spar-cell'>Spar Deflection</div>";
-echo "</div>";
 
 // Output each spar's details
 foreach ($spars as $spar) {
+	// Display row header only if it's the first row (i.e., when row_count == 0)
+    if ($spar === reset($spars)) {
+	    echo "<div class='spar-table'>";
+	    echo "<h2>Compare deflection known reference spars</h2>";
+        echo "<div class='spar-header'>";
+        echo "<div class='spar-cell'>name</div>";
+        echo "<div class='spar-cell'>scale factor</div>";
+        echo "<div class='spar-cell'>spar deflection</div>";
+        echo "</div>";
+    }
     echo "<div class='spar-row'>";
     echo "<div class='spar-cell'>" . htmlentities($spar->name) . "</div>";
-    echo "<div class='spar-cell'>" . htmlentities($spar->scalefactor) . "%</div>";
+    echo "<div class='spar-cell'>" . htmlentities($spar->scalefactor) . "</div>";
     echo "<div class='spar-cell'>" . htmlentities($spar->sparDeflection) . "</div>";
     echo "</div>";
 }
