@@ -21,10 +21,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Build linter image
+      run: |
+        docker build -t php-cs-fixer:ci -f Dockerfile-php-style .
+
     - name: Run linter
       run: |
-        docker run --rm -v $(pwd):/app php-cs-fixer fix src/ --rules=@PSR12 --using-cache=no
-        docker run --rm -v $(pwd):/app php-cs-fixer fix tests/ --rules=@PSR12 --using-cache=no
+        docker run --rm -v $(pwd):/app php-cs-fixer:ci fix src/ --rules=@PSR12 --using-cache=no
+        docker run --rm -v $(pwd):/app php-cs-fixer:ci fix tests/ --rules=@PSR12 --using-cache=no
 
     - name: Commit and push VERSION file
       if: ${{ steps.linter.outputs.changed == 'true' }} # Only commit if files are modified
