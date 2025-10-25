@@ -1,0 +1,17 @@
+name: Security checks
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Check for secrets
+      run: docker run --network none -v $(pwd):/path zricethezav/gitleaks:latest  detect --source="/path"
+
+

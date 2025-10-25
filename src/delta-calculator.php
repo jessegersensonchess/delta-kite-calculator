@@ -1,9 +1,9 @@
 <?php
 
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 
-require_once __DIR__ . '/src/Delta.php';
+ require_once __DIR__ . '/src/Delta.php';
 
 use Kite\Delta;
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 
     // Instantiate the Delta class with user input values
     $delta = new Delta($noseangle, $lengthatcenterline, $units);
-    
+
     // Extract the calculated values from the Delta class
     $halfspan = $delta->getHalfSpan();
     $nominalspan = $delta->getNominalSpan();

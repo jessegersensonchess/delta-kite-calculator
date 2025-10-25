@@ -4,6 +4,5 @@ services:
     volumes:
       - ./:/app:ro
     working_dir: /app
-    #command: phpunit --debug --default-time-limit 5 --do-not-cache-result --fail-on-empty-test-suite --only-summary-for-coverage-text tests/
-    command: phpunit --default-time-limit 5 --do-not-cache-result --fail-on-empty-test-suite --only-summary-for-coverage-text tests/
+    command: phpunit --default-time-limit 5 --do-not-cache-result --fail-on-empty-test-suite tests/
 
