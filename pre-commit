@@ -1,0 +1,36 @@
+#!/usr/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+echo "STEP 1: php-cs-fixer fix src/"
+docker run --network none --rm -v "$(pwd)":/app php-cs-fixer fix src/ --rules=@PSR12 --using-cache=no
+
+echo "STEP 2: php-cs-fixer fix tests/"
+docker run --network none --rm -v "$(pwd)":/app php-cs-fixer fix tests/ --rules=@PSR12 --using-cache=no
+
+echo "STEP 3: semgrep scan"
+result=$(docker run --network host --rm -v "${PWD}/src:/src" returntocorp/semgrep semgrep scan --metrics=off --no-git-ignore --config p/php --oss-only --no-autofix --json --quiet ./ | jq '.results | length > 0')
+if [ "$result" = 'true' ]
+then
+	echo "ERROR: security issues detected in the code"
+	docker run --network host --rm -v "${PWD}/src:/src" returntocorp/semgrep semgrep scan --metrics=off --no-git-ignore --config p/php --oss-only --no-autofix --json ./ | jq '.results'
+	exit 1
+fi
+
+validate_yaml() {
+    python3 "${SCRIPTS_FOLDER}/python/validate_yml.py" "$1"
+}
+
+validateYml() {
+	find ./ -name '*.yml' | while read -r FILE; do
+		if validate_yaml "$FILE"; then
+				echo bad
+		fi
+	done
+}
+
