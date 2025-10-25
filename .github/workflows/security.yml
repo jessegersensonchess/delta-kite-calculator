@@ -13,4 +13,11 @@ jobs:
     - name: Check for secrets
       run: docker run --network none -v $(pwd):/path zricethezav/gitleaks:latest  detect --source="/path"
 
+    - name: Check for vulnerabilities
+      run: |
+        result=$(docker run --network host --rm -v "${PWD}/src:/src" returntocorp/semgrep semgrep scan --metrics=off --no-git-ignore --config p/php --oss-only --no-autofix --json --quiet ./ | jq '.results | length > 0')
+        if [[ "$result" == 'true' ]]; then
+          echo "vulnerabilities detected in php code"
+	      exit 1
+        fi
 

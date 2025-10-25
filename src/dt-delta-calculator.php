@@ -36,7 +36,7 @@ $scaleFactor = isset($_POST['scaleFactor']) && is_numeric($_POST['scaleFactor'])
 	table {width:300px;}</style>
 
 	
-		<style type="text/css">#atscale {width: <?php echo $scaleFactor * 100;?>%}</style>
+		<style type="text/css">#atscale {width: <?php echo htmlentities($scaleFactor * 100);?>%}</style>
 	<?php
     if (isset($_POST['submit'])) {
         $scaleFactor = $_POST['scaleFactor'];
@@ -75,7 +75,7 @@ $area = $calculator->getArea($scaleFactor);
 	<div style="width:100%">
 	<div style="width:40%;margin-left:2em;margin-right:20px;float:left;">
 
-<h3>Dimensions (scaled to <?= $scaleFactor * 100 ?>%)</h3>
+	<h3>Dimensions (scaled to <?php echo htmlentities($scaleFactor * 100); ?>%)</h3>
 <table>
     <tr><td width="200"></td><td>cm</td><td>in</td></tr>
 <?php
@@ -85,8 +85,7 @@ foreach ($getMeasurements as $row) {
     $inch      = $cm / Calculator::CM_PER_INCH;
     $precision = $row['precision'];
     $inchFmt   = number_format($inch, $precision);
-
-    echo "<tr><td>{$label}</td><td>{$cm}</td><td>{$inchFmt}</td></tr>\n";
+	echo "<tr><td>" . htmlentities($label) . "</td><td>" . htmlentities($cm) . "</td><td>" . htmlentities($inchFmt) . "</td></tr>\n";
 }
 ?>
 </table>
@@ -101,8 +100,8 @@ foreach ($getSpars as $row) {
     $cm        = number_format($row['value'], $precision);
     $inch      = $cm / Calculator::CM_PER_INCH;
     $inchFmt   = number_format($inch, $precision);
+	echo "<tr><td>" . htmlentities($label) . "</td><td>" . htmlentities($cm) . "</td><td>" . htmlentities($inchFmt) . "</td></tr>\n";
 
-    echo "<tr><td>{$label}</td><td>{$cm}</td><td>{$inchFmt}</td></tr>\n";
 }
 ?>
 </table>
@@ -118,7 +117,8 @@ foreach ($getSparDeflection as $row) {
     $precision = $row['precision'];
     $valueFmt   = number_format($value, $precision);
 
-    echo "<tr><td>{$label}</td><td><a href='/kites/spar-calculator.php?wingspar={$value}'>{$value}</a></td></tr>\n";
+    echo "<tr><td>" . htmlentities($label) . "</td><td><a href='/kites/spar-calculator.php?wingspar=" . urlencode($value) . "'>" . htmlentities($value) . "</a></td></tr>\n";
+
 }
 ?>
 </table>
@@ -129,14 +129,14 @@ foreach ($getSparDeflection as $row) {
     <h3>Relative size</h3>
     'full scale'<br/>
     <img alt="kite reference size" height="100" src="/kites/dtdeltareference-t.jpg" /><br/><br/>
-    scaled <?= $scaleFactor * 100 ?>%<br/>
-    <img alt="your kites size" height="<?= 100 * $scaleFactor ?>" src="/kites/dtdeltareference-t.jpg" />
+    scaled <?php echo htmlentities($scaleFactor * 100);?>%<br/>
+	<img alt="your kites size" height="<?php echo htmlentities(100 * $scaleFactor);?>" src="/kites/dtdeltareference-t.jpg" />
 
     <h3>Sail area <span style="font-size:10px;font-weight:normal;">= (wing width x height)+2(box width * height)+2(central rectangle)</span></h3>
-<?= $area ?> sq ft.
+<?php echo htmlentities($area);?> sq ft.
 
     <h3>Recommended line</h3>
-    <?= $lineData['recommendedLineStrength'] ?> <?= $units === 'cm' ? 'kg' : 'lb.' ?>
+    <?php echo htmlentities($lineData['recommendedLineStrength']);?> <?= $units === 'cm' ? 'kg' : 'lb.' ?>
 
 
 	<h3>Plan</h3>
@@ -147,4 +147,5 @@ foreach ($getSparDeflection as $row) {
 
   </div>
   </body></html>
+
 
