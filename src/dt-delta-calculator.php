@@ -85,7 +85,7 @@ foreach ($getMeasurements as $row) {
     $inch      = $cm / Calculator::CM_PER_INCH;
     $precision = $row['precision'];
     $inchFmt   = number_format($inch, $precision);
-	echo "<tr><td>" . htmlentities($label) . "</td><td>" . htmlentities($cm) . "</td><td>" . htmlentities($inchFmt) . "</td></tr>\n";
+    echo "<tr><td>" . htmlentities($label) . "</td><td>" . htmlentities($cm) . "</td><td>" . htmlentities($inchFmt) . "</td></tr>\n";
 }
 ?>
 </table>
@@ -100,7 +100,7 @@ foreach ($getSpars as $row) {
     $cm        = number_format($row['value'], $precision);
     $inch      = $cm / Calculator::CM_PER_INCH;
     $inchFmt   = number_format($inch, $precision);
-	echo "<tr><td>" . htmlentities($label) . "</td><td>" . htmlentities($cm) . "</td><td>" . htmlentities($inchFmt) . "</td></tr>\n";
+    echo "<tr><td>" . htmlentities($label) . "</td><td>" . htmlentities($cm) . "</td><td>" . htmlentities($inchFmt) . "</td></tr>\n";
 
 }
 ?>
